@@ -26,6 +26,8 @@
     <Property Name="status" Type="int" Nullable="false" />
     <Property Name="codeShop" Type="int" />
     <Property Name="distance" Type="int" />
+    <Property Name="dateStart" Type="datetime" />
+    <Property Name="dateEnd" Type="datetime" />
   </EntityType>
   <EntityType Name="Shops">
     <Key>
@@ -41,16 +43,6 @@
     <Property Name="fromHour" Type="varchar" MaxLength="5" />
     <Property Name="toHour" Type="varchar" MaxLength="5" />
     <Property Name="addressString" Type="nvarchar" MaxLength="100" Nullable="false" />
-  </EntityType>
-  <EntityType Name="sysdiagrams">
-    <Key>
-      <PropertyRef Name="diagram_id" />
-    </Key>
-    <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
-    <Property Name="principal_id" Type="int" Nullable="false" />
-    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="version" Type="int" />
-    <Property Name="definition" Type="varbinary(max)" />
   </EntityType>
   <EntityType Name="Users">
     <Key>
@@ -127,7 +119,6 @@
     <EntitySet Name="Category_to_shop" EntityType="Self.Category_to_shop" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Searches" EntityType="Self.Searches" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Shops" EntityType="Self.Shops" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
     <AssociationSet Name="fk_constraint1" Association="Self.fk_constraint1">
       <End Role="Shops" EntitySet="Shops" />

@@ -20,7 +20,10 @@ namespace BL.Casting
                 codeCategory = search.codeCategory,
                 status = search.status,
                 codeShop = search.codeShop,
-                distance = search.distance
+                distance = search.distance,
+                dateStart = search.dateStart,
+                dateEnd = search.dateEnd
+
             };
         }
         public static Search GetSearch(SearchDTO search)
@@ -33,7 +36,9 @@ namespace BL.Casting
                 codeCategory = search.codeCategory,
                 status = search.status,
                 codeShop = search.codeShop,
-                distance = search.distance
+                distance = search.distance,
+                dateStart = search.dateStart,
+                dateEnd = search.dateEnd
             };
         }
         //המרת רשימה שלמה
@@ -42,16 +47,7 @@ namespace BL.Casting
             List<SearchDTO> searchDTOs = new List<SearchDTO>();
             foreach (var item in searches)
             {
-                searchDTOs.Add(new SearchDTO()
-                {
-                    codeSearch = item.codeSearch,
-                    codeUser = item.codeUser,
-                    nameProduct = item.nameProduct,
-                    codeCategory = item.codeCategory,
-                    status = item.status,
-                    codeShop = item.codeShop,
-                    distance = item.distance
-                });
+                searchDTOs.Add(GetSearchDTO(item));
             }
             return searchDTOs;
         }

@@ -9,7 +9,6 @@
         <EntityTypeShape EntityType="ProjectModel.Category_to_shop" Width="1.5" PointX="3" PointY="3.875" IsExpanded="true" />
         <EntityTypeShape EntityType="ProjectModel.Search" Width="1.5" PointX="6" PointY="3.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ProjectModel.Shop" Width="1.5" PointX="0.75" PointY="8.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="ProjectModel.sysdiagram" Width="1.5" PointX="2.75" PointY="6.625" IsExpanded="true" />
         <EntityTypeShape EntityType="ProjectModel.User" Width="1.5" PointX="3.75" PointY="0.75" IsExpanded="true" />
         <AssociationConnector Association="ProjectModel.fk_constraint2" ManuallyRouted="false" />
         <AssociationConnector Association="ProjectModel.fk_constraint5" ManuallyRouted="false" />

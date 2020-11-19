@@ -21,6 +21,8 @@ namespace DAL
         public int status { get; set; }
         public Nullable<int> codeShop { get; set; }
         public Nullable<int> distance { get; set; }
+        public Nullable<System.DateTime> dateStart { get; set; }
+        public Nullable<System.DateTime> dateEnd { get; set; }
     
         public virtual Category Category { get; set; }
         public virtual User User { get; set; }

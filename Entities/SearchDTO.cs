@@ -15,5 +15,7 @@ namespace Entities
         public int? codeShop { get; set; }
         public int codeCategory { get; set; }
         public int? distance { get; set; }
+        public DateTime? dateStart { get; set; }
+        public DateTime? dateEnd { get; set; }
     }
 }
