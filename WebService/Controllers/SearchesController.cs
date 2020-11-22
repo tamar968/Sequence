@@ -1,5 +1,6 @@
 ﻿using BL;
 using BL.Helpers;
+using DAL;
 using Entities;
 using Newtonsoft.Json.Linq;
 using System;
@@ -74,6 +75,30 @@ namespace WebService.Controllers
             string mailShop = data["mailShop"].ToObject<string>();
             return Ok(BL.Searches.Found(codeSearch,mailShop));
         }
+        [Route("SearchByStatus")]
+        [HttpPost]
+        public IHttpActionResult SearchByStatus([FromBody] JObject data)
+        {
+            EStatus status = data["status"].ToObject<EStatus>();
+            return Ok(Searches.SearchByStatus(data["passwordUser"].ToString(),status));
+        }
+        //UpdateSearchStatus
+        [Route("UpdateSearchStatus")]
+        [HttpPost]
+        public IHttpActionResult UpdateSearchStatus([FromBody] JObject data)
+        {
+            int codeSearch = data["codeSearch"].ToObject<int>();
+            EStatus status = data["status"].ToObject<EStatus>();
+            string mailShop = data["mailShop"].ToObject<string>();
+            return Ok(BL.Searches.UpdateSearchStatus(codeSearch,status,mailShop));
+        }
 
+        //UpdateAllSearchStatus
+        [Route("UpdateAllSearchStatus")]
+        [HttpGet]
+        public IHttpActionResult UpdateAllSearchStatus()
+        {
+            return Ok(BL.Searches.UpdateAllSearchStatus());
+        }
     }
 }

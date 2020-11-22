@@ -1,21 +1,36 @@
-﻿using System;
+﻿using BL.Casting;
+using BL.Helpers;
+using DAL;
+using Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Entities;
-using DAL;
-using BL.Casting;
-using BL.Helpers;
-using System.Web;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity;
-using System.Data.Entity.Core.Objects;
 
 namespace BL
 {
+    /*public enum EStatus
+    {
+        NotFound,
+        Found ,
+        TimeWait,
+        TimeOver
+    }*/
+
+
     public class Searches
     {
+        public static EStatus CheckStatus(SearchDTO search)
+        {
+            if (search.status == EStatus.Found || search.status == EStatus.Deleted)
+                return search.status;
+            if (search.dateEnd!=null && search.dateEnd > DateTime.Today)
+            {
+                return EStatus.TimeWait;
+            }
+            if (search.dateStart != null && search.dateStart < DateTime.Today)
+                return EStatus.TimeOver;
+            return 0;
+        }
         //Returns the categories for choosing
         public static WebResult<List<CategoryDTO>> GetCategories()
         {
@@ -35,6 +50,7 @@ namespace BL
         {
             using (ProjectEntities db = new ProjectEntities())
             {
+                searchDTO.status = CheckStatus(searchDTO);
 
                 try
                 {
@@ -66,7 +82,7 @@ namespace BL
             using (ProjectEntities db = new ProjectEntities())
             {
 
-                Search search = db.Searches.Find(code);
+                Search search =db.Searches.Find(code);
                 if (search == null)
                     return new WebResult<SearchDTO>
                     {
@@ -74,7 +90,7 @@ namespace BL
                         Status = false,
                         Value = null
                     };
-                search.status = 2;
+                search.status = (int) EStatus.Deleted;
                 db.SaveChanges();
                 return new WebResult<SearchDTO>
                 {
@@ -82,15 +98,16 @@ namespace BL
                     Status = true,
                     Value = SearchCast.GetSearchDTO(search)
                 };
-            }
+            };
         }
+
         //Search is found- user bought the product
         public static WebResult<SearchDTO> Found(int codeSearch, string mailShop)
         {
             using (ProjectEntities db = new ProjectEntities())
             {
 
-                Search search = db.Searches.Find(codeSearch);
+                SearchDTO search = SearchCast.GetSearchDTO(db.Searches.Find(codeSearch));
                 if (search == null)
                     return new WebResult<SearchDTO>
                     {
@@ -98,7 +115,7 @@ namespace BL
                         Status = false,
                         Value = null
                     };
-                search.status = 1;
+                search.status = EStatus.Found;
                 search.codeShop = db.Shops.FirstOrDefault(f => f.mailShop == mailShop).codeShop;
                 db.SaveChanges();
 
@@ -106,10 +123,30 @@ namespace BL
                 {
                     Message = "החיפוש נמצא בהצלחה",
                     Status = true,
-                    Value = SearchCast.GetSearchDTO(search)
+                    Value = search
                 };
             }
         }
+
+        public static WebResult<List<SearchDTO>> UpdateAllSearchStatus()
+        {
+            using (ProjectEntities db = new ProjectEntities())
+            {
+
+                foreach (var s in db.Searches)
+                {
+                    UpdateSearchStatus(s.codeSearch, CheckStatus(SearchCast.GetSearchDTO(s)), null);
+                }
+                db.SaveChanges();
+                return new WebResult<List<SearchDTO>>
+                {
+                    Message = "רשימת מטלות עודכנה בהצלחה",
+                    Status = true,
+                    Value = SearchCast.GetSearchesDTO(db.Searches.ToList())
+                };
+            }
+        }
+
         //Returns history of the searches, even thouse the user found
         public static WebResult<List<SearchDetailsForUser>> GetHistory(string passwordUser)
         {
@@ -118,9 +155,10 @@ namespace BL
                 string pass = passwordUser;
                 User CurrentUser = db.Users.FirstOrDefault(f => f.passwordUser == pass);
                 List<SearchDetailsForUser> searchesForUser = new List<SearchDetailsForUser>();
-                foreach (var search in db.Searches)
+                var searches = SearchCast.GetSearchesDTO(db.Searches.ToList());
+                foreach (var search in searches)
                 {
-                    if (search.codeUser == CurrentUser.codeUser && search.status != 2)
+                    if (search.codeUser == CurrentUser.codeUser && search.status != EStatus.Deleted)
                     {
                         searchesForUser.Add(new SearchDetailsForUser()
                         {
@@ -150,7 +188,9 @@ namespace BL
 
                 User CurrentUser = db.Users.FirstOrDefault(f => f.passwordUser == passwordUser);
                 List<SearchDetailsForUser> searchesForUser = new List<SearchDetailsForUser>();
-                foreach (var search in db.Searches)
+
+                var searches = SearchCast.GetSearchesDTO(db.Searches.ToList());
+                foreach (var search in searches)
                 {
                     if (search.codeUser == CurrentUser.codeUser && search.status == 0)
                     {
@@ -180,9 +220,10 @@ namespace BL
 
                 User CurrentUser = db.Users.FirstOrDefault(f => f.passwordUser == passwordUser);
                 List<SearchDetailsForUser> searchesForUser = new List<SearchDetailsForUser>();
-                foreach (var search in db.Searches)
+                var searches = SearchCast.GetSearchesDTO(db.Searches.ToList());
+                foreach (var search in searches)
                 {
-                    if (search.codeUser == CurrentUser.codeUser && search.status == 1)
+                    if (search.codeUser == CurrentUser.codeUser && search.status == EStatus.Found)
                     {
                         searchesForUser.Add(new SearchDetailsForUser()
                         {
@@ -242,6 +283,97 @@ namespace BL
                 };
             }
         }
+        public static WebResult<List<SearchDetailsForUser>> SearchByStatus(string passwordUser, EStatus status)
+        {
+            using (ProjectEntities db = new ProjectEntities())
+            {
 
+                User CurrentUser = db.Users.FirstOrDefault(f => f.passwordUser == passwordUser);
+                List<SearchDetailsForUser> searchesForUser = new List<SearchDetailsForUser>();
+                var searches = SearchCast.GetSearchesDTO(db.Searches.ToList());
+                foreach (var search in searches)
+                {
+                    if (search.codeUser == CurrentUser.codeUser && search.status == status)
+                    {
+                        searchesForUser.Add(new SearchDetailsForUser()
+                        {
+                            codeSearch = search.codeSearch,
+                            nameProduct = search.nameProduct,
+                            nameCategory = db.Categories.First(f => f.codeCategory == search.codeCategory).nameCategory,
+                            status = search.status,
+                            nameShop = search.codeShop == null ? "" : db.Shops.First(f => f.codeShop == search.codeShop).nameShop
+                        });
+                    }
+                }
+                searchesForUser.Reverse();
+                return new WebResult<List<SearchDetailsForUser>>
+                {
+                    Message = "חיפושי המשתמש נשלחו בהצלחה",
+                    Value = searchesForUser,
+                    Status = true
+                };
+            }
+        }
+        public static Search UpdateSearchStatus(int codeSearch, EStatus status, string mailShop)
+        {
+            using (ProjectEntities db = new ProjectEntities())
+            {
+
+                Search search = db.Searches.Find(codeSearch);
+                if (search == null)
+                    return null;
+                search.status =(int) status;
+                //if (status == EStatus.Found)
+                //    search.codeShop = db.Shops.FirstOrDefault(f => f.mailShop == mailShop).codeShop;
+                db.SaveChanges();
+
+                return search;
+            }
+
+            //public static WebResult<SearchDTO> UpdateSearchStatus(int code, EStatus eStatus, string shop)
+            //{
+
+            //    using (ProjectEntities db = new ProjectEntities())
+            //    {
+
+            //        SearchDTO search = SearchCast.GetSearchDTO(db.Searches.Find(code));
+            //        if (search == null)
+            //            return new WebResult<SearchDTO>
+            //            {
+            //                Message = "לא נמצא חיפוש זה במאגר",
+            //                Status = false,
+            //                Value = null
+            //            };
+            //        search.status = status;
+            //        if (status == EStatus.Found)
+            //            search.codeShop = db.Shops.FirstOrDefault(f => f.mailShop == shop).codeShop;
+            //        db.SaveChanges();
+
+            //        return new WebResult<SearchDTO>
+            //        {
+            //            Message = "החיפוש נמצא בהצלחה",
+            //            Status = true,
+            //            Value = search
+            //        };
+            //    }
+            //}
+
+            //public static WebResult<List<SearchDTO>> UpdateAllSearchStatus()
+            //{
+            //    using (ProjectEntities db = new ProjectEntities())
+            //    {
+
+            //        SearchCast.GetSearchesDTO(db.Searches.ToList()).ForEach(s => UpdateSearchStatus(s.codeSearch, CheckStatus(s), null));
+
+            //        return new WebResult<List<SearchDTO>>
+            //        {
+            //            Message = "רשימת מטלות עודכנה בהצלחה",
+            //            Status = true,
+            //            Value = SearchCast.GetSearchesDTO(db.Searches.ToList())
+            //        };
+            //    }
+            //}
+            //}
+        }
     }
 }

@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace BL.Casting
-{//מושלם צריך לבדוק, אין כאן שום רשימה של מחלקה אחרת
+{
     class SearchCast
     {
         public static SearchDTO GetSearchDTO(Search search)
@@ -18,7 +18,7 @@ namespace BL.Casting
                 codeUser = search.codeUser,
                 nameProduct = search.nameProduct,
                 codeCategory = search.codeCategory,
-                status = search.status,
+                status = (EStatus) search.status,
                 codeShop = search.codeShop,
                 distance = search.distance,
                 dateStart = search.dateStart,
@@ -34,7 +34,7 @@ namespace BL.Casting
                 codeUser = search.codeUser,
                 nameProduct = search.nameProduct,
                 codeCategory = search.codeCategory,
-                status = search.status,
+                status = (int) search.status,
                 codeShop = search.codeShop,
                 distance = search.distance,
                 dateStart = search.dateStart,
