@@ -504,3 +504,4 @@ C:\workspace1209\Sequence\serverSide\DAL\obj\Debug\DAL.csproj.CoreCompileInputs.
 C:\workspace1209\Sequence\serverSide\DAL\obj\Debug\DAL.csproj.CopyComplete
 C:\workspace1209\Sequence\serverSide\DAL\obj\Debug\DAL.dll
 C:\workspace1209\Sequence\serverSide\DAL\obj\Debug\DAL.pdb
+C:\workspace1209\Sequence\serverSide\DAL\obj\Debug\DAL.csprojAssemblyReference.cache

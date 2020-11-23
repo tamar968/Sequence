@@ -28,7 +28,8 @@ namespace BL.Casting
                 toHour=shop.toHour,
                 mailShop=shop.mailShop,
                 addressString=shop.addressString,
-                Categories=cat
+                Categories=cat,
+                isFavorite = shop.isFavorite
             };
         }
         //Convert from ShopDTO to Shop
@@ -45,7 +46,8 @@ namespace BL.Casting
                 longitude=shop.longitude,
                 fromHour=shop.fromHour,
                 toHour=shop.toHour,
-                addressString=shop.addressString
+                addressString=shop.addressString,
+                 isFavorite = shop.isFavorite
             };
         }
         //Conver a list of shops to list of shopDTOs
@@ -54,19 +56,7 @@ namespace BL.Casting
             List<ShopDTO> shopDTOs = new List<ShopDTO>();
             foreach (var item in shops)
             {
-                shopDTOs.Add(new ShopDTO()
-                {
-                    codeShop = item.codeShop,
-                    nameShop = item.nameShop,
-                    passwordShop = item.passwordShop,
-                    phoneShop = item.phoneShop,
-                  longitude=item.longitude,
-                  latitude=item.latitude,
-                    mailShop=item.mailShop,
-                    fromHour=item.fromHour,
-                    toHour=item.toHour,
-                    addressString=item.addressString
-                });
+                shopDTOs.Add(GetShopDTO(item));
             }
             return shopDTOs;
         }

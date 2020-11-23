@@ -24,7 +24,7 @@ namespace BL
         {
             using (ProjectEntities db = new ProjectEntities())
             {
-                if (db.Shops.FirstOrDefault(w => w.passwordShop == shopDto.passwordShop) != null ||
+                if (/*db.Shops.FirstOrDefault(w => w.passwordShop == shopDto.passwordShop) != null ||*/
                 db.Shops.FirstOrDefault(w => w.mailShop == shopDto.mailShop) != null)//אם יש כבר  כזה מייל או כזו סיסמה  
 
                     return new WebResult<LoginData<ShopDTO>>
@@ -41,24 +41,32 @@ namespace BL
                 }
 
                 db.Shops.Add(ShopCast.GetShop(shopDto));
-                if (db.SaveChanges() > 0)//בדיקה שהמידע נשמר
+                try
                 {
-                    var accessToken = await GetTokenDataAsync(shopDto.mailShop, shopDto.passwordShop, request);
-
-                    if (!string.IsNullOrEmpty(accessToken))
+                    if (db.SaveChanges() > 0)//בדיקה שהמידע נשמר
                     {
-                        return new WebResult<LoginData<ShopDTO>>
-                        {
-                            Status = true,
-                            Message = "התחברת בהצלחה",
-                            Value = new LoginData<ShopDTO>
-                            {
-                                TokenJson = accessToken,
-                                objectDTO = shopDto
-                            }
-                        };
+                        var accessToken = await GetTokenDataAsync(shopDto.mailShop, shopDto.passwordShop, request);
 
+                        if (!string.IsNullOrEmpty(accessToken))
+                        {
+                            return new WebResult<LoginData<ShopDTO>>
+                            {
+                                Status = true,
+                                Message = "התחברת בהצלחה",
+                                Value = new LoginData<ShopDTO>
+                                {
+                                    TokenJson = accessToken,
+                                    objectDTO = shopDto
+                                }
+                            };
+
+                        }
                     }
+
+                }
+                catch   (Exception e)
+                {
+                  var a=  e.Data;
                 }
                 return new WebResult<LoginData<ShopDTO>>
                 {

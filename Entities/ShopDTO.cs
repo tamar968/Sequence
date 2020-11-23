@@ -16,5 +16,6 @@ namespace Entities
         public string toHour { get; set; }
         public string addressString { get; set; }
         public virtual List<CategoryDTO> Categories { get; set; }
+        public bool? isFavorite { get; set; }
     }
 }

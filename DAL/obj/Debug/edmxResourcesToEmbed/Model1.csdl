@@ -52,6 +52,7 @@
     <Property Name="addressString" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
     <NavigationProperty Name="Category_to_shop" Relationship="Self.fk_constraint1" FromRole="Shops" ToRole="Category_to_shop" />
     <NavigationProperty Name="Searches" Relationship="Self.fk_constraint7" FromRole="Shops" ToRole="Searches" />
+    <Property Name="isFavorite" Type="Boolean" />
   </EntityType>
   <EntityType Name="User">
     <Key>

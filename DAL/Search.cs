@@ -11,7 +11,7 @@ namespace DAL
 {
     using System;
     using System.Collections.Generic;
-
+    
     public partial class Search
     {
         public int codeSearch { get; set; }

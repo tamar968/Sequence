@@ -36,6 +36,7 @@
     <EntitySetMapping Name="Shops">
       <EntityTypeMapping TypeName="ProjectModel.Shop">
         <MappingFragment StoreEntitySet="Shops">
+          <ScalarProperty Name="isFavorite" ColumnName="isFavorite" />
           <ScalarProperty Name="codeShop" ColumnName="codeShop" />
           <ScalarProperty Name="nameShop" ColumnName="nameShop" />
           <ScalarProperty Name="passwordShop" ColumnName="passwordShop" />

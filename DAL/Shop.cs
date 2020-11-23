@@ -31,6 +31,7 @@ namespace DAL
         public string fromHour { get; set; }
         public string toHour { get; set; }
         public string addressString { get; set; }
+        public Nullable<bool> isFavorite { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Category_to_shop> Category_to_shop { get; set; }

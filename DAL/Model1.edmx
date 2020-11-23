@@ -48,6 +48,7 @@
           <Property Name="fromHour" Type="varchar" MaxLength="5" />
           <Property Name="toHour" Type="varchar" MaxLength="5" />
           <Property Name="addressString" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="isFavorite" Type="bit" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
@@ -202,6 +203,7 @@
           <Property Name="addressString" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
           <NavigationProperty Name="Category_to_shop" Relationship="Self.fk_constraint1" FromRole="Shops" ToRole="Category_to_shop" />
           <NavigationProperty Name="Searches" Relationship="Self.fk_constraint7" FromRole="Shops" ToRole="Searches" />
+          <Property Name="isFavorite" Type="Boolean" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -342,6 +344,7 @@
           <EntitySetMapping Name="Shops">
             <EntityTypeMapping TypeName="ProjectModel.Shop">
               <MappingFragment StoreEntitySet="Shops">
+                <ScalarProperty Name="isFavorite" ColumnName="isFavorite" />
                 <ScalarProperty Name="codeShop" ColumnName="codeShop" />
                 <ScalarProperty Name="nameShop" ColumnName="nameShop" />
                 <ScalarProperty Name="passwordShop" ColumnName="passwordShop" />
