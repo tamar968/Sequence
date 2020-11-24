@@ -19,17 +19,26 @@ namespace BL
 
     public class Searches
     {
+        public static bool isBeforeToday(DateTime d)
+        {
+            return d.Year <= DateTime.Today.Year && d.Month <= DateTime.Today.Month && d.Day < DateTime.Today.Day;
+        }
+
+        public static bool isAfterToday(DateTime d)
+        {
+            return d.Year >= DateTime.Today.Year && d.Month >= DateTime.Today.Month && d.Day > DateTime.Today.Day;
+        }
         public static EStatus CheckStatus(SearchDTO search)
         {
             if (search.status == EStatus.Found || search.status == EStatus.Deleted)
                 return search.status;
-            if (search.dateEnd!=null && search.dateEnd > DateTime.Today)
+            if (isBeforeToday((DateTime)search.dateEnd))
             {
-                return EStatus.TimeWait;
-            }
-            if (search.dateStart != null && search.dateStart < DateTime.Today)
                 return EStatus.TimeOver;
-            return 0;
+            }
+            if (isAfterToday((DateTime)search.dateStart))
+                return EStatus.TimeWait;
+            return EStatus.NotFound;
         }
         //Returns the categories for choosing
         public static WebResult<List<CategoryDTO>> GetCategories()
