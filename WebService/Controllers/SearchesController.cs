@@ -80,7 +80,7 @@ namespace WebService.Controllers
         public IHttpActionResult SearchByStatus([FromBody] JObject data)
         {
             EStatus status = data["status"].ToObject<EStatus>();
-            return Ok(Searches.SearchByStatus(data["passwordUser"].ToString(),status));
+            return Ok(Searches.SearchByStatus(data["userPassword"].ToString(),status));
         }
         //UpdateSearchStatus
         [Route("UpdateSearchStatus")]

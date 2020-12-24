@@ -58,7 +58,10 @@ namespace BL.Helpers
                 List<SearchInShop> searchesFound = new List<SearchInShop>();
                 double lat = userIdWithLocation.Lat;
                 double lng = userIdWithLocation.Lng;
+                try
+                {
                 var codeUser = db.Users.First(f => f.passwordUser == userIdWithLocation.Uuid).codeUser;
+   
                 foreach (var search in db.Searches)
                 {
                     //only if the search is from this user and its status is 0, to find
@@ -102,6 +105,17 @@ namespace BL.Helpers
                             }
                         }
                     }
+                }
+                }
+                catch (Exception e)
+                {
+                    return new WebResult<List<SearchInShop>>()
+                    {
+                        Status = true,
+                        Message = "error!!!"+ e.Message,
+                        Value = null
+                    };
+
                 }
                 return new WebResult<List<SearchInShop>>()
                 {

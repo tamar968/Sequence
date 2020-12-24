@@ -116,7 +116,7 @@ namespace BL
             using (ProjectEntities db = new ProjectEntities())
             {
 
-                SearchDTO search = SearchCast.GetSearchDTO(db.Searches.Find(codeSearch));
+                Search search = db.Searches.Find(codeSearch);
                 if (search == null)
                     return new WebResult<SearchDTO>
                     {
@@ -124,7 +124,7 @@ namespace BL
                         Status = false,
                         Value = null
                     };
-                search.status = EStatus.Found;
+                search.status =(int) EStatus.Found;
                 search.codeShop = db.Shops.FirstOrDefault(f => f.mailShop == mailShop).codeShop;
                 db.SaveChanges();
 
@@ -132,7 +132,7 @@ namespace BL
                 {
                     Message = "החיפוש נמצא בהצלחה",
                     Status = true,
-                    Value = search
+                    Value =SearchCast.GetSearchDTO(search)
                 };
             }
         }
@@ -163,6 +163,15 @@ namespace BL
             {
                 string pass = passwordUser;
                 User CurrentUser = db.Users.FirstOrDefault(f => f.passwordUser == pass);
+                if (CurrentUser == null)
+                {
+                    return new WebResult<List<SearchDetailsForUser>>
+                    {
+                        Message = "the user cant find!",
+                        Value = null,
+                        Status = false
+                    };
+                }
                 List<SearchDetailsForUser> searchesForUser = new List<SearchDetailsForUser>();
                 var searches = SearchCast.GetSearchesDTO(db.Searches.ToList());
                 foreach (var search in searches)
