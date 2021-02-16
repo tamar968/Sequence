@@ -24,12 +24,11 @@ namespace BL
         {
             using (ProjectEntities db = new ProjectEntities())
             {
-                if (/*db.Shops.FirstOrDefault(w => w.passwordShop == shopDto.passwordShop) != null ||*/
-                db.Shops.FirstOrDefault(w => w.mailShop == shopDto.mailShop) != null)//אם יש כבר  כזה מייל או כזו סיסמה  
+                if (db.Shops.FirstOrDefault(w => w.mailShop == shopDto.mailShop) != null)//אם יש כבר  כזה מייל או כזו סיסמה  
 
                     return new WebResult<LoginData<ShopDTO>>
                     {
-                        Message = "אחד מהפרטים שהוקשו כבר קיים במערכת",
+                        Message = "משתמש כבר קיים במערכת",
                         Status = false,
                         Value = null
                     };

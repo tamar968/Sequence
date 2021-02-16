@@ -47,7 +47,7 @@ namespace BL.Casting
                 fromHour=shop.fromHour,
                 toHour=shop.toHour,
                 addressString=shop.addressString,
-                 isFavorite = shop.isFavorite
+                isFavorite = shop.isFavorite
             };
         }
         //Conver a list of shops to list of shopDTOs
