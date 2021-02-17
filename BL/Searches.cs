@@ -21,11 +21,13 @@ namespace BL
     {
         public static bool isBeforeToday(DateTime d)
         {
+            return DateTime.Today.CompareTo(d) < 0;
             return d.Year <= DateTime.Today.Year && d.Month <= DateTime.Today.Month && d.Day < DateTime.Today.Day;
         }
 
         public static bool isAfterToday(DateTime d)
         {
+            return DateTime.Today.CompareTo(d) > 0;
             return d.Year >= DateTime.Today.Year && d.Month >= DateTime.Today.Month && d.Day > DateTime.Today.Day;
         }
         public static EStatus CheckStatus(SearchDTO search)
