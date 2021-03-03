@@ -21,19 +21,23 @@ namespace BL
     {
         public static bool isBeforeToday(DateTime d)
         {
-            return DateTime.Today.CompareTo(d) < 0;
+            return d.Date.CompareTo(DateTime.Today) < 0;
             return d.Year <= DateTime.Today.Year && d.Month <= DateTime.Today.Month && d.Day < DateTime.Today.Day;
         }
 
         public static bool isAfterToday(DateTime d)
         {
-            return DateTime.Today.CompareTo(d) > 0;
+            return d.Date.CompareTo(DateTime.Today) > 0;
             return d.Year >= DateTime.Today.Year && d.Month >= DateTime.Today.Month && d.Day > DateTime.Today.Day;
         }
         public static EStatus CheckStatus(SearchDTO search)
         {
+            
             if (search.status == EStatus.Found || search.status == EStatus.Deleted)
                 return search.status;
+   
+            //if (search.dateEnd.Value.Date  == DateTime.Today.Date|| search.dateStart.Value.Date == DateTime.Today.Date)
+            //    return EStatus.NotFound;
             if (isBeforeToday((DateTime)search.dateEnd))
             {
                 return EStatus.TimeOver;
@@ -61,6 +65,8 @@ namespace BL
         {
             using (ProjectEntities db = new ProjectEntities())
             {
+                searchDTO.dateEnd = searchDTO.dateEnd.Value.AddDays(1);
+                searchDTO.dateStart =searchDTO.dateStart.Value.AddDays(1);
                 searchDTO.status = CheckStatus(searchDTO);
 
                 try
@@ -139,6 +145,7 @@ namespace BL
             }
         }
 
+
         public static WebResult<List<SearchDTO>> UpdateAllSearchStatus()
         {
             using (ProjectEntities db = new ProjectEntities())
@@ -152,6 +159,25 @@ namespace BL
                 return new WebResult<List<SearchDTO>>
                 {
                     Message = "רשימת מטלות עודכנה בהצלחה",
+                    Status = true,
+                    Value = SearchCast.GetSearchesDTO(db.Searches.ToList())
+                };
+            }
+        }
+
+        public static WebResult<List<SearchDTO>> UpdateavoritesShops()
+        {
+            using (ProjectEntities db = new ProjectEntities())
+            {
+
+                foreach (var s in db.Searches)
+                {
+
+                }
+                db.SaveChanges();
+                return new WebResult<List<SearchDTO>>
+                {
+                    Message = "רשימת חנויות מועדפות עודכנה בהצלחה",
                     Status = true,
                     Value = SearchCast.GetSearchesDTO(db.Searches.ToList())
                 };
@@ -182,10 +208,14 @@ namespace BL
                     {
                         searchesForUser.Add(new SearchDetailsForUser()
                         {
-                            codeSearch = search.codeSearch,
-                            nameProduct = search.nameProduct,
+                            CodeSearch = search.codeSearch,
+                            NameProduct = search.nameProduct,
                             nameCategory = db.Categories.First(f => f.codeCategory == search.codeCategory).nameCategory,
-                            status = search.status,
+                            Status = search.status,
+                            dateStart = search.dateStart,
+                            dateEnd = search.dateEnd,
+                            codeShop = search.codeShop,
+
                             nameShop = search.codeShop == null ? "" : db.Shops.First(f => f.codeShop == search.codeShop).nameShop
                         });
                     }
@@ -216,10 +246,10 @@ namespace BL
                     {
                         searchesForUser.Add(new SearchDetailsForUser()
                         {
-                            codeSearch = search.codeSearch,
-                            nameProduct = search.nameProduct,
+                            CodeSearch = search.codeSearch,
+                            NameProduct = search.nameProduct,
                             nameCategory = db.Categories.First(f => f.codeCategory == search.codeCategory).nameCategory,
-                            status = search.status
+                            Status = search.status
                         });
                     }
                 }
@@ -247,10 +277,10 @@ namespace BL
                     {
                         searchesForUser.Add(new SearchDetailsForUser()
                         {
-                            codeSearch = search.codeSearch,
-                            nameProduct = search.nameProduct,
+                            CodeSearch = search.codeSearch,
+                            NameProduct = search.nameProduct,
                             nameCategory = db.Categories.First(f => f.codeCategory == search.codeCategory).nameCategory,
-                            status = search.status,
+                            Status = search.status,
                             nameShop = search.codeShop == null ? "" : db.Shops.First(f => f.codeShop == search.codeShop).nameShop
                         });
                     }
@@ -317,10 +347,10 @@ namespace BL
                     {
                         searchesForUser.Add(new SearchDetailsForUser()
                         {
-                            codeSearch = search.codeSearch,
-                            nameProduct = search.nameProduct,
+                            CodeSearch = search.codeSearch,
+                            NameProduct = search.nameProduct,
                             nameCategory = db.Categories.First(f => f.codeCategory == search.codeCategory).nameCategory,
-                            status = search.status,
+                            Status = search.status,
                             nameShop = search.codeShop == null ? "" : db.Shops.First(f => f.codeShop == search.codeShop).nameShop
                         });
                     }

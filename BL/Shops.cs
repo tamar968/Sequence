@@ -175,7 +175,7 @@ namespace BL
                 MailMessage mail = new MailMessage();
                 SmtpClient SmtpServer = new SmtpClient("smtp.gmail.com");
                 mail.From = new MailAddress("rememberproject2019@gmail.com");
-                mail.To.Add("shlomomolev@gmail.com");
+                mail.To.Add("tamar96880@gmail.com");
                 mail.Subject = "הוספת קטגוריה חדשה";
                 mail.Body = shopDTO?.nameShop + "    מבקש להוסיף את הקטגוריה " + categoryName + " לרשימת הקטגוריות הכללית ";
                 SmtpServer.Port = 587;
