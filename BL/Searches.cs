@@ -4,6 +4,7 @@ using DAL;
 using Entities;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace BL
@@ -32,10 +33,10 @@ namespace BL
         }
         public static EStatus CheckStatus(SearchDTO search)
         {
-            
+
             if (search.status == EStatus.Found || search.status == EStatus.Deleted)
                 return search.status;
-   
+
             //if (search.dateEnd.Value.Date  == DateTime.Today.Date|| search.dateStart.Value.Date == DateTime.Today.Date)
             //    return EStatus.NotFound;
             if (isBeforeToday((DateTime)search.dateEnd))
@@ -66,7 +67,7 @@ namespace BL
             using (ProjectEntities db = new ProjectEntities())
             {
                 searchDTO.dateEnd = searchDTO.dateEnd.Value.AddDays(1);
-                searchDTO.dateStart =searchDTO.dateStart.Value.AddDays(1);
+                searchDTO.dateStart = searchDTO.dateStart.Value.AddDays(1);
                 searchDTO.status = CheckStatus(searchDTO);
 
                 try
@@ -99,7 +100,7 @@ namespace BL
             using (ProjectEntities db = new ProjectEntities())
             {
 
-                Search search =db.Searches.Find(code);
+                Search search = db.Searches.Find(code);
                 if (search == null)
                     return new WebResult<SearchDTO>
                     {
@@ -107,7 +108,7 @@ namespace BL
                         Status = false,
                         Value = null
                     };
-                search.status = (int) EStatus.Deleted;
+                search.status = (int)EStatus.Deleted;
                 db.SaveChanges();
                 return new WebResult<SearchDTO>
                 {
@@ -132,7 +133,7 @@ namespace BL
                         Status = false,
                         Value = null
                     };
-                search.status =(int) EStatus.Found;
+                search.status = (int)EStatus.Found;
                 search.codeShop = db.Shops.FirstOrDefault(f => f.mailShop == mailShop).codeShop;
                 db.SaveChanges();
 
@@ -140,7 +141,7 @@ namespace BL
                 {
                     Message = "החיפוש נמצא בהצלחה",
                     Status = true,
-                    Value =SearchCast.GetSearchDTO(search)
+                    Value = SearchCast.GetSearchDTO(search)
                 };
             }
         }
@@ -215,12 +216,23 @@ namespace BL
                             dateStart = search.dateStart,
                             dateEnd = search.dateEnd,
                             codeShop = search.codeShop,
-
-                            nameShop = search.codeShop == null ? "" : db.Shops.First(f => f.codeShop == search.codeShop).nameShop
+                            nameShop = search.codeShop == null ? "" : db.Shops.First(f => f.codeShop == search.codeShop).nameShop,
+                            IsFavoriteShop = search.codeShop == null ? null : db.Shops.First(f => f.codeShop == search.codeShop).isFavorite
                         });
                     }
 
                 }
+
+                string queryString = @"
+                        UPDATE Shops
+                        SET 
+                        Shops.isFavorite = 1
+                        FROM Shops
+                        INNER JOIN Searches
+                        ON Shops.codeShop = Searches.codeShop
+                        ";
+                int effected = db.Database.ExecuteSqlCommand(queryString);
+
                 searchesForUser.Reverse();
                 return new WebResult<List<SearchDetailsForUser>>
                 {
@@ -372,7 +384,7 @@ namespace BL
                 Search search = db.Searches.Find(codeSearch);
                 if (search == null)
                     return null;
-                search.status =(int) status;
+                search.status = (int)status;
                 //if (status == EStatus.Found)
                 //    search.codeShop = db.Shops.FirstOrDefault(f => f.mailShop == mailShop).codeShop;
                 db.SaveChanges();

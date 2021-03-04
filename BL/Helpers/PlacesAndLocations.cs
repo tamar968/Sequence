@@ -95,7 +95,8 @@ namespace BL.Helpers
                                             PhoneShop = shop.phoneShop,
                                             MailShop = shop.mailShop,
                                             FromHour = shop.fromHour,
-                                            ToHour = shop.toHour
+                                            ToHour = shop.toHour,
+                                            IsFavorite = shop.isFavorite
                                         });
                                     }
 

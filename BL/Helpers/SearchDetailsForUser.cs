@@ -15,6 +15,7 @@ namespace BL.Helpers
         public string nameCategory { get; set; }
         public EStatus Status { get; set; }
         public string nameShop { get; set; }
+        public bool? IsFavoriteShop { get; set; }
 
     }
 }

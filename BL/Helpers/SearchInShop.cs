@@ -16,5 +16,6 @@ namespace BL.Helpers
         public string FromHour { get; set; }
         public string ToHour { get; set; }
         public string AddressString { get; set; }
+        public bool? IsFavorite { get; internal set; }
     }
 }
