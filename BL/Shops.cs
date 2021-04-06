@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Entities;
-using DAL;
-using BL.Casting;
-using System.Collections;
-using System.Data;
-using System.Web;
+﻿using BL.Casting;
 using BL.Helpers;
-using System.Security.Claims;
+using DAL;
+using Entities;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Mail;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Web;
 namespace BL
 {
     public class Shops
@@ -63,9 +60,9 @@ namespace BL
                     }
 
                 }
-                catch   (Exception e)
+                catch (Exception e)
                 {
-                  var a=  e.Data;
+                    var a = e.Data;
                 }
                 return new WebResult<LoginData<ShopDTO>>
                 {
@@ -80,42 +77,56 @@ namespace BL
         {
             using (ProjectEntities db = new ProjectEntities())
             {
-                var shop = db.Shops.Where(w => w.mailShop == mail && w.passwordShop == password).FirstOrDefault();
-                if (shop != null)//אם המשתמש קיים במאגר המשך לקבלת טוקן, אחרת החזר שגיאה שהמתשמש לא קיים
-                {
-                    ShopDTO shopDto = ShopCast.GetShopDTO(shop);
+                var shop = db.Shops.Where(w => w.mailShop == mail).FirstOrDefault();
+                if (shop != null) {
+                    if (shop.passwordShop == password)
+                    {
+                        //אם המשתמש קיים במאגר המשך לקבלת טוקן, אחרת החזר שגיאה שהמתשמש לא קיים
+                        {
+                            ShopDTO shopDto = ShopCast.GetShopDTO(shop);
 
-                    List<int> codesCategories = db.Category_to_shop.Where(c => c.codeShop == shop.codeShop).Select(x => x.codeCategory).ToList();
-                    //Category category;
-                    //shopDto.Categories = new List<CategoryDTO>();
-                    //foreach (var item in codesCategories)
-                    //{
-                    //    category = db.Categories.Find(item);
+                            List<int> codesCategories = db.Category_to_shop.Where(c => c.codeShop == shop.codeShop).Select(x => x.codeCategory).ToList();
+                            //Category category;
+                            //shopDto.Categories = new List<CategoryDTO>();
+                            //foreach (var item in codesCategories)
+                            //{
+                            //    category = db.Categories.Find(item);
 
-                    //    if (category != null)
-                    //        shopDto.Categories.Add(CategoryCast.GetCategoryDTO(category));
-                    //}
-                    var accessToken = await GetTokenDataAsync(shopDto.mailShop, shopDto.passwordShop, requestUri);
-                    if (!string.IsNullOrEmpty(accessToken))
+                            //    if (category != null)
+                            //        shopDto.Categories.Add(CategoryCast.GetCategoryDTO(category));
+                            //}
+                            var accessToken = await GetTokenDataAsync(shopDto.mailShop, shopDto.passwordShop, requestUri);
+                            if (!string.IsNullOrEmpty(accessToken))
+                            {
+                                return new WebResult<LoginData<ShopDTO>>
+                                {
+                                    Status = true,
+                                    Message = "התחברת בהצלחה",
+                                    Value = new LoginData<ShopDTO>
+                                    {
+                                        TokenJson = accessToken,
+                                        objectDTO = shopDto
+                                    }
+                                };
+                            }
+                        }
+                    }
+                    else
                     {
                         return new WebResult<LoginData<ShopDTO>>
                         {
-                            Status = true,
-                            Message = "התחברת בהצלחה",
-                            Value = new LoginData<ShopDTO>
-                            {
-                                TokenJson = accessToken,
-                                objectDTO = shopDto
-                            }
+                            Status = false,
+                            Message = " אין משתמש רשום בשם וסיסמא זו  ",
+                            Value = null
                         };
                     }
                 }
                 return new WebResult<LoginData<ShopDTO>>
-                {
-                    Status = false,
-                    Message = " אין משתמש רשום בשם וסיסמא זו  ",
-                    Value = null
-                };
+                        {
+                            Status = false,
+                            Message = " אין משתמש רשום ",
+                            Value = null
+                        };
             }
         }
         //Update shop with categories
